@@ -1,0 +1,76 @@
+import sqlite3
+
+new=sqlite3.connect("new.db")
+cursor=new.cursor()
+#creating Table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS news(
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL ,
+  phone INTEGER,
+  country TEXT NOT NULL)
+""")
+def client_info():
+    while True:
+        try:
+            name=input("What is your name ? ").strip().capitalize() #taking client informations
+            if not name:
+                print("Nmae Can not be empty .")
+            elif not name.isalpha():
+                print("Name must be alphabetical . ")
+            else:
+                print(f"{name} has been registered successfully .")
+                break
+        except ValueError:
+            print("Please try again later .")
+            continue
+    while True:
+        try:
+            phone = input("What is Your phone number ? ").strip()
+            if not phone:
+                print("Phone number can not be empty . ")
+                continue
+            elif not phone.isdigit():
+                print("Phone number must be digit only . ")
+                continue
+            elif len(phone)<11 or len(phone)>11:
+                print("Your phone number is wrong , try again . ")
+                continue
+            elif phone:
+                print("Thanks your phone number has been submitted .")
+                phone=int(phone)
+                break
+        except ValueError:
+            print("Please Try again later .")
+            continue
+    country_list=["IRAN","UK","USA","BAHRAIN","GERMANY","FRANCE","DENMARK"]
+    while True:
+        try:
+            country=input("Where is your Country ? ").strip().upper()
+            if not country:
+                print("Country field must be filled .")
+                continue
+            elif country not in country_list:
+                print("We are afraid your country is not in the list yet . Try again later .")
+                continue
+            elif not country.isalpha():
+                print("Country name is not valid . ")
+                continue
+            elif country in country_list:
+                print(f"Dear {name} from : {country} Welcome aboard .")
+                break
+        except ValueError:
+            print("Please Try Again later . ")
+            continue
+            #Inserting all collected information to the table
+    cursor.execute("INSERT INTO news(name,phone,country) VALUES(?,?,?)",(name,phone,country))
+    cursor.execute("SELECT *FROM news")
+    rows=cursor.fetchall()
+    for row in rows:
+        print(f"ID : {row[0]}, Name:{row[1]}, Phone : {row[2]}, Country : {row[3]}")
+    new.commit()
+    new.close()
+
+
+
+client_info()
